@@ -3,7 +3,6 @@ import pygame
 import os
 import pickle
 
-# Екран
 if os.path.exists('settings_data.txt'):
      with open('settings_data.txt', 'rb') as f:
             settings_data = pickle.load(f)
@@ -29,7 +28,6 @@ UI_BORDER_COLOR = '#111111'
 UI_BORDER_COLOR_ACTIVE = 'gold'
 
 
-# Положення накладання
 OVERLAY_POSITIONS = {
 
     'tool' : (40, SCREEN_HEIGHT - 15),
