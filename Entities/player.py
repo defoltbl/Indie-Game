@@ -14,12 +14,10 @@ class Player(pygame.sprite.Sprite):
         self.status = 'down_idle'
         self.frame_index = 0
 
-        # загальне налаштування
         self.image = self.animations[self.status][self.frame_index]
         self.rect = self.image.get_rect(center = pos)
         self.z = LAYERS['main']
 
-        # атрибути руху
         self.direction = pygame.math.Vector2()
         self.pos = pygame.math.Vector2(self.rect.center)
         self.speed = 500
@@ -27,7 +25,6 @@ class Player(pygame.sprite.Sprite):
         self.attack_cooldown = 400
         self.attack_time = None
 
-        # зіткнення
         self.hitbox = self.rect.copy().inflate((-110, -40))
         self.collision_sprites  = collision_sprites
 
@@ -44,7 +41,6 @@ class Player(pygame.sprite.Sprite):
         self.font_size = 30
         self.font = pygame.font.Font('../font/Soda.ttf', self.font_size)
 
-		# зброя
         self.create_attack = create_attack
         self.destroy_attack = destroy_attack
         self.weapon_index = 0
@@ -53,12 +49,10 @@ class Player(pygame.sprite.Sprite):
         self.weapon_switch_time = None
         self.switch_duration_cooldown = 200
 
-        # damage timer
         self.vulnerable = True
         self.hurt_time = None
         self.invulnerability_duration = 500
 
-        # таймери
         self.timers = {
             'tool use': Timer(350, self.use_tool),
             'tool switch' : Timer(200),
@@ -87,13 +81,11 @@ class Player(pygame.sprite.Sprite):
         self.show_tasks = False
         self.all_tasks_completed = False
 
-        # інструменти
         self.tools = ['hoe', 'axe', 'water', 'hammer']
         self.tool_index = 0
         self.selected_tool = self.tools[self.tool_index]
 
 
-        # насіння
         self.seeds = ['corn', 'tomato']
         self.seed_index = 0
         self.selected_seed = self.seeds[self.seed_index]
@@ -103,12 +95,10 @@ class Player(pygame.sprite.Sprite):
             'tomato': 0
         }
 
-        # тварини
         self.animals = ['chicken', 'cow']
         self.animal_index = 0
         self.selected_animal = self.animals[self.animal_index]
 
-        # інвертар
         self.item_inventory = {
 
             'wood' :   200,
@@ -134,7 +124,6 @@ class Player(pygame.sprite.Sprite):
 
         self.money = 100
 
-        # взаємодія
         self.tree_sprites = tree_sprites
         self.interaction = interaction
         self.sleep = False
@@ -177,7 +166,6 @@ class Player(pygame.sprite.Sprite):
 
         self.cursor_image = pygame.image.load('../graphics/cursor/cursor.png')
 
-        # звук
         self.watering = pygame.mixer.Sound('../audio/water.mp3')
         self.success = pygame.mixer.Sound('../audio/success.wav')
         self.success.set_volume(0.4)
@@ -240,7 +228,6 @@ class Player(pygame.sprite.Sprite):
         width, height = rect.size
         space_width, _ = font.size(' ')
         
-        # Разбиение текста на строки
         current_line = []
         current_width = 0
         for word in words:
@@ -253,9 +240,8 @@ class Player(pygame.sprite.Sprite):
                 current_line.append(word)
                 current_width += word_width + space_width
         
-        lines.append(' '.join(current_line))  # добавляем последнюю строку
+        lines.append(' '.join(current_line)) 
 
-        # Рендеринг строк с центрированием
         total_text_height = len(lines) * font.get_height()
         start_y = rect.top + (rect.height - total_text_height) // 2
 
@@ -513,8 +499,7 @@ class Player(pygame.sprite.Sprite):
         keys = pygame.key.get_pressed()
 
         if not self.timers['tool use'].active and not self.sleep: 
-
-            # Напрямок руху персонажа
+			
             if keys[pygame.K_w]:
                 self.direction.y = -1
                 self.status = 'up'
@@ -533,37 +518,28 @@ class Player(pygame.sprite.Sprite):
             else:
                 self.direction.x = 0
 
-            # Використання інструментів
             if keys[pygame.K_SPACE]:
-                # timer для використання інструментів
                 self.timers['tool use'].activate()
                 self.direction = pygame.math.Vector2()
                 self.frame_index = 0
 
-            # зміна інструментів
             if keys[pygame.K_q] and not self.timers['tool switch'].active:
                 self.timers['tool switch'].activate()
                 self.tool_index += 1
-                # якщо довжина індексу інструментів > довжини інструментів => індекс інструментів = 0
                 self.tool_index = self.tool_index if self.tool_index < len(self.tools) else 0
                 self.selected_tool = self.tools[self.tool_index]
 
-            # Використання насіння
             if keys[pygame.K_LCTRL]:
-                # timer для використання інструментів
                 self.timers['seed use'].activate()
                 self.direction = pygame.math.Vector2()
                 self.frame_index = 0
 
-            # зміна типу насіння
             if keys[pygame.K_e] and not self.timers['seed switch'].active:
                 self.timers['seed switch'].activate()
                 self.seed_index += 1
-                # якщо довжина індексу інструментів > довжини інструментів => індекс інструментів = 0
                 self.seed_index = self.seed_index if self.seed_index < len(self.seeds) else 0
                 self.selected_seed = self.seeds[self.seed_index]
 
-            # Додавання тварин
             if keys[pygame.K_r]:
                 self.timers['animal add'].activate()
                 self.direction = pygame.math.Vector2()
@@ -574,15 +550,12 @@ class Player(pygame.sprite.Sprite):
                 self.direction = pygame.math.Vector2()
                 self.frame_index = 0
 
-            # зміна типу тварин
             if keys[pygame.K_f] and not self.timers['animal switch'].active:
                 self.timers['animal switch'].activate()
                 self.animal_index += 1
-                # якщо довжина індексу інструментів > довжини інструментів => індекс інструментів = 0
                 self.animal_index = self.animal_index if self.animal_index < len(self.animals) else 0
                 self.selected_animal = self.animals[self.animal_index]
 
-            # Зміна типу будівель
             if keys[pygame.K_b] and not self.timers['building switch'].active:
                 self.timers['building switch'].activate()
                 self.building_layer.selected_building_index += 1
@@ -622,13 +595,10 @@ class Player(pygame.sprite.Sprite):
                         self.sleep = True
     
     def get_status(self):
-        # Якщо гравець не рухається
         if self.direction.magnitude() == 0:
            if not 'idle' in self.status and not 'attack' in self.status:
-            # Додати _idle до статусу
               self.status = self.status.split('_')[0] + '_idle'
 
-        # атака
         if self.attacking:
             self.direction.x = 0
             self.direction.y = 0
@@ -641,11 +611,9 @@ class Player(pygame.sprite.Sprite):
             if 'attack' in self.status:
                  self.status = self.status.replace('_attack','')
         
-        # використання інструментів
         if self.timers['tool use'].active:
             self.status = self.status.split('_')[0] + '_' + self.selected_tool
 
-        # використання інструментів
         if self.timers['animal add'].active:
             self.status = self.status.split('_')[0] + '_' + self.selected_animal
 
@@ -678,34 +646,31 @@ class Player(pygame.sprite.Sprite):
             if hasattr(sprite, 'hitbox'):
                 if sprite.hitbox.colliderect(self.hitbox):
                     if direction == 'horizontal':
-                        if self.direction.x > 0 : # рухається вправо
+                        if self.direction.x > 0 : 
                            self.hitbox.right = sprite.hitbox.left
-                        if self.direction.x < 0 : # рухається  вліво
+                        if self.direction.x < 0 : 
                            self.hitbox.left = sprite.hitbox.right 
                         self.rect.centerx = self.hitbox.centerx
                         self.pos.x = self.hitbox.centerx
                         
                     if direction == 'vertical': 
-                        if self.direction.y > 0 : # рухається вниз
+                        if self.direction.y > 0 :
                            self.hitbox.bottom = sprite.hitbox.top
-                        if self.direction.y < 0 : # рухається  вверх
+                        if self.direction.y < 0 :
                            self.hitbox.top = sprite.hitbox.bottom 
                         self.rect.centery = self.hitbox.centery
                         self.pos.y = self.hitbox.centery
                                    
     def move(self, dt):
 
-        # нормалізація вектора
         if self.direction.magnitude() > 0:
            self.direction = self.direction.normalize()
 
-        # горизонтальний рух 
         self.pos.x += self.direction.x * self.speed * dt
         self.hitbox.centerx = round(self.pos.x)
         self.rect.centerx = self.hitbox.centerx
         self.collision('horizontal')
 
-        # вертикальний рух 
         self.pos.y += self.direction.y * self.speed * dt
         self.hitbox.centery = round(self.pos.y)
         self.rect.centery = self.hitbox.centery
