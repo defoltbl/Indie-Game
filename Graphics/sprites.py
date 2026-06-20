@@ -22,11 +22,9 @@ class Interaction(Generic):
 class Water(Generic):
     def __init__(self, pos, frames, groups):
 
-        # анімація
         self.frames = frames
         self.frame_index = 0
 
-        # sprite setup
         super().__init__(pos = pos, 
                          surf = self.frames[self.frame_index], 
                          groups = groups, 
@@ -52,7 +50,6 @@ class Particle(Generic):
         self.start_time = pygame.time.get_ticks()
         self.duration = duration
 
-        # Використання масок для ефектів нанесення урону
         mask_surf = pygame.mask.from_surface(self.image)
         new_surf = mask_surf.to_surface()
         new_surf.set_colorkey((0,0,0))
@@ -68,14 +65,12 @@ class Tree(Generic):
     def __init__(self, pos, surf, groups, name, player_add):
         super().__init__(pos, surf, groups)
 
-        # Параметри дерева
         self.name = name
         self.health = 5
         self.alive = True
         stump_path = f'../graphics/stumps/{"small" if self.name ==  "small" else "large"}.png'
         self.stump_surf = pygame.image.load(stump_path).convert_alpha()
 
-        # додавання фруктів
         self.apple_surf = pygame.image.load('../graphics/fruit/apple.png')
         self.apples_pos = APPLE_POS[self.name]
         self.apple_sprites = pygame.sprite.Group()
@@ -87,13 +82,10 @@ class Tree(Generic):
 
     def damage(self):
 
-        # урон по дереву
         self.health -= 1
 
-        # звук
         self.axe_sound.play()
 
-        # прибирання яблука
         if len(self.apple_sprites.sprites()) > 0:
             random_apple = choice(self.apple_sprites.sprites())
             Particle(pos = random_apple.rect.topleft, 
