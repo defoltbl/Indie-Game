@@ -6,14 +6,12 @@ class AnimationPlayer:
     def __init__(self):
         self.frames = {
             
-            # attacks 
             'claw': import_folder('../graphics/particles/claw'),
             'slash': import_folder('../graphics/particles/slash'),
             'sparkle': import_folder('../graphics/particles/sparkle'),
             'leaf_attack': import_folder('../graphics/particles/leaf_attack'),
             'thunder': import_folder('../graphics/particles/thunder'),
 
-            # monster deaths
             'squid': import_folder('../graphics/particles/smoke_orange'),
             'raccoon': import_folder('../graphics/particles/raccoon'),
             'spirit': import_folder('../graphics/particles/nova'),
