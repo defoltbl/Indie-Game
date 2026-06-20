@@ -97,9 +97,7 @@ class ChickenTile(pygame.sprite.Sprite):
                  self.status = 'left'
                 
     def get_status(self):
-        # Якщо куриця не рухається
         if self.direction.magnitude() == 0:
-            # Додати _idle до статусу
            self.status = self.status.split('_')[0] + '_idle'
     
     def collision(self, direction):
@@ -107,97 +105,81 @@ class ChickenTile(pygame.sprite.Sprite):
             if hasattr(sprite, 'hitbox'):
                 if sprite.hitbox.colliderect(self.hitbox):
                     if direction == 'horizontal':
-                        if self.direction.x > 0 : # рухається вправо
+                        if self.direction.x > 0 :
                            self.hitbox.right = sprite.hitbox.left
-                        if self.direction.x < 0 : # рухається  вліво
+                        if self.direction.x < 0 :
                            self.hitbox.left = sprite.hitbox.right 
                         self.rect.centerx = self.hitbox.centerx
                         self.pos.x = self.hitbox.centerx
                         
                     if direction == 'vertical': 
-                        if self.direction.y > 0 : # рухається вниз
+                        if self.direction.y > 0 :
                            self.hitbox.bottom = sprite.hitbox.top
-                        if self.direction.y < 0 : # рухається  вверх
+                        if self.direction.y < 0 :
                            self.hitbox.top = sprite.hitbox.bottom 
                         self.rect.centery = self.hitbox.centery
                         self.pos.y = self.hitbox.centery
                                    
     def move(self, dt):
-    # нормалізація вектора
         if self.direction.magnitude() > 0:
            self.direction = self.direction.normalize()
-
-    # зберігаємо попереднє положення для випадку колізій
+            
         previous_pos = self.pos.copy()
 
-    # горизонтальний рух 
         self.pos.x += self.direction.x * self.speed * dt
         self.hitbox.centerx = round(self.pos.x)
         self.rect.centerx = self.hitbox.centerx
         self.collision('horizontal')
 
-    # перевірка колізій після горизонтального руху
         if pygame.sprite.spritecollideany(self, self.collision_sprites):
-        # повертаємо попереднє положення
            self.pos = previous_pos
            self.hitbox.centerx = round(self.pos.x)
            self.rect.centerx = self.hitbox.centerx
-        # змінюємо напрямок
            self.direction.x *= -1
 
-    # вертикальний рух 
         self.pos.y += self.direction.y * self.speed * dt
         self.hitbox.centery = round(self.pos.y)
         self.rect.centery = self.hitbox.centery
         self.collision('vertical')
 
-    # перевірка колізій після вертикального руху
         if pygame.sprite.spritecollideany(self, self.collision_sprites):
-        # повертаємо попереднє положення
            self.pos = previous_pos
            self.hitbox.centery = round(self.pos.y)
            self.rect.centery = self.hitbox.centery
-        # змінюємо напрямок
            self.direction.y *= -1
 
-    # Перевірка колізії з плитками Collision
         collision_tiles = self.tmx_data.get_layer_by_name('Collision').tiles()
         for tile in collision_tiles:
             tile_rect = pygame.Rect(tile[0] * TILE_SIZE, tile[1] * TILE_SIZE, TILE_SIZE, TILE_SIZE)
             if self.hitbox.colliderect(tile_rect):
-            # Відновлюємо попереднє положення
               self.pos = previous_pos
               self.hitbox.centerx = round(self.pos.x)
               self.rect.centerx = self.hitbox.centerx
               self.hitbox.centery = round(self.pos.y)
               self.rect.centery = self.hitbox.centery
-              break  # Вийти з циклу, якщо знайдена колізія з плиткою
+              break
 
-    # Перевірка колізії з 'Trees'
         tree_tiles = self.tmx_data.get_layer_by_name('Trees')
         for tile in tree_tiles:
             tile_rect = pygame.Rect(tile.x, tile.y, tile.width, tile.height)
             if self.hitbox.colliderect(tile_rect):
-            # Відновлюємо попереднє положення
                self.pos = previous_pos
                self.hitbox.centerx = round(self.pos.x)
                self.rect.centerx = self.hitbox.centerx
                self.hitbox.centery = round(self.pos.y)
                self.rect.centery = self.hitbox.centery
-               break  # Вийти з циклу, якщо знайдена колізія з плиткою
+               break 
 
-    # Перевірка колізії з 'Decoration'
         decoration_tiles = self.tmx_data.get_layer_by_name('Decoration')
         for tile in decoration_tiles:
             tile_rect = pygame.Rect(tile.x, tile.y, tile.width, tile.height)
             if self.hitbox.colliderect(tile_rect):
-            # Відновлюємо попереднє положення
                self.pos = previous_pos
                self.hitbox.centerx = round(self.pos.x)
                self.rect.centerx = self.hitbox.centerx
                self.hitbox.centery = round(self.pos.y)
                self.rect.centery = self.hitbox.centery
-               break  # Вийти з циклу, якщо знайдена колізія з плиткою
+               break 
 
         for obj in self.objects:
             if obj != self and hasattr(obj, 'hitbox') and self.hitbox.colliderect(obj.hitbox):
@@ -271,7 +253,6 @@ class CowTile(pygame.sprite.Sprite):
         self.pos = pygame.math.Vector2(self.rect.center)
         self.speed = 50
 
-         # зіткнення
         self.hitbox = self.rect.copy()
         self.collision_sprites = pygame.sprite.Group()
 
@@ -330,9 +311,7 @@ class CowTile(pygame.sprite.Sprite):
                  self.status = 'left'
                 
     def get_status(self):
-        # Якщо корова не рухається
         if self.direction.magnitude() == 0:
-            # Додати _idle до статусу
            self.status = self.status.split('_')[0] + '_idle'
     
     def collision(self, direction):
@@ -340,97 +319,81 @@ class CowTile(pygame.sprite.Sprite):
             if hasattr(sprite, 'hitbox'):
                 if sprite.hitbox.colliderect(self.hitbox):
                     if direction == 'horizontal':
-                        if self.direction.x > 0 : # рухається вправо
+                        if self.direction.x > 0 :
                            self.hitbox.right = sprite.hitbox.left
-                        if self.direction.x < 0 : # рухається  вліво
+                        if self.direction.x < 0 :
                            self.hitbox.left = sprite.hitbox.right 
                         self.rect.centerx = self.hitbox.centerx
                         self.pos.x = self.hitbox.centerx
                         
                     if direction == 'vertical': 
-                        if self.direction.y > 0 : # рухається вниз
+                        if self.direction.y > 0 : 
                            self.hitbox.bottom = sprite.hitbox.top
-                        if self.direction.y < 0 : # рухається  вверх
+                        if self.direction.y < 0 :
                            self.hitbox.top = sprite.hitbox.bottom 
                         self.rect.centery = self.hitbox.centery
                         self.pos.y = self.hitbox.centery
                                    
     def move(self, dt):
-    # нормалізація вектора
         if self.direction.magnitude() > 0:
            self.direction = self.direction.normalize()
-
-    # зберігаємо попереднє положення для випадку колізій
+            
         previous_pos = self.pos.copy()
 
-    # горизонтальний рух 
         self.pos.x += self.direction.x * self.speed * dt
         self.hitbox.centerx = round(self.pos.x)
         self.rect.centerx = self.hitbox.centerx
         self.collision('horizontal')
 
-    # перевірка колізій після горизонтального руху
         if pygame.sprite.spritecollideany(self, self.collision_sprites):
-        # повертаємо попереднє положення
            self.pos = previous_pos
            self.hitbox.centerx = round(self.pos.x)
            self.rect.centerx = self.hitbox.centerx
-        # змінюємо напрямок
            self.direction.x *= -1
-
-    # вертикальний рух 
+            
         self.pos.y += self.direction.y * self.speed * dt
         self.hitbox.centery = round(self.pos.y)
         self.rect.centery = self.hitbox.centery
         self.collision('vertical')
 
-    # перевірка колізій після вертикального руху
         if pygame.sprite.spritecollideany(self, self.collision_sprites):
-        # повертаємо попереднє положення
            self.pos = previous_pos
            self.hitbox.centery = round(self.pos.y)
            self.rect.centery = self.hitbox.centery
-        # змінюємо напрямок
            self.direction.y *= -1
 
-    # Перевірка колізії з плитками Collision
         collision_tiles = self.tmx_data.get_layer_by_name('Collision').tiles()
         for tile in collision_tiles:
             tile_rect = pygame.Rect(tile[0] * TILE_SIZE, tile[1] * TILE_SIZE, TILE_SIZE, TILE_SIZE)
             if self.hitbox.colliderect(tile_rect):
-            # Відновлюємо попереднє положення
               self.pos = previous_pos
               self.hitbox.centerx = round(self.pos.x)
               self.rect.centerx = self.hitbox.centerx
               self.hitbox.centery = round(self.pos.y)
               self.rect.centery = self.hitbox.centery
-              break  # Вийти з циклу, якщо знайдена колізія з плиткою
+              break  
 
-    # Перевірка колізії з 'Trees'
         tree_tiles = self.tmx_data.get_layer_by_name('Trees')
         for tile in tree_tiles:
             tile_rect = pygame.Rect(tile.x, tile.y, tile.width, tile.height)
             if self.hitbox.colliderect(tile_rect):
-            # Відновлюємо попереднє положення
                self.pos = previous_pos
                self.hitbox.centerx = round(self.pos.x)
                self.rect.centerx = self.hitbox.centerx
                self.hitbox.centery = round(self.pos.y)
                self.rect.centery = self.hitbox.centery
-               break  # Вийти з циклу, якщо знайдена колізія з плиткою
+               break 
 
-    # Перевірка колізії з 'Decoration'
         decoration_tiles = self.tmx_data.get_layer_by_name('Decoration')
         for tile in decoration_tiles:
             tile_rect = pygame.Rect(tile.x, tile.y, tile.width, tile.height)
             if self.hitbox.colliderect(tile_rect):
-            # Відновлюємо попереднє положення
                self.pos = previous_pos
                self.hitbox.centerx = round(self.pos.x)
                self.rect.centerx = self.hitbox.centerx
                self.hitbox.centery = round(self.pos.y)
                self.rect.centery = self.hitbox.centery
-               break  # Вийти з циклу, якщо знайдена колізія з плиткою
+               break  
 
         for obj in self.objects:
             if obj != self and hasattr(obj, 'hitbox') and self.hitbox.colliderect(obj.hitbox):
