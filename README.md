@@ -1,4 +1,4 @@
-# Indie-Game
+# Story-Driven-Indie-Game
 
 ![Platform](https://img.shields.io/badge/platform-Windows-0078D6?logo=windows&logoColor=white)
 ![Language](https://img.shields.io/badge/language-Python%203.9-3776AB?logo=python&logoColor=white)
@@ -11,7 +11,7 @@ A story-driven 2D indie game built in Python, blending farming, building, and su
 
 ## Overview
 
-Indie-Game is a single-player 2D adventure where the player grows crops, raises animals, fights enemies, builds and modifies their surroundings, trades resources, and completes story objectives, all while progress is automatically tracked and can be saved or loaded between sessions. The game runs fully offline, requires no network connection, and stores all data locally on the player's machine.
+Story-Driven-Indie-Game is a single-player 2D adventure where the player grows crops, raises animals, fights enemies, builds and modifies their surroundings, trades resources, and completes story objectives, all while progress is automatically tracked and can be saved or loaded between sessions. The game runs fully offline, requires no network connection, and stores all data locally on the player's machine.
 
 ## Main Features
 
