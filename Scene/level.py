@@ -27,10 +27,8 @@ class Level:
         self.volume = volume
         self.difficulty = difficulty
 
-        # Отримати поверхню дисплея
         self.display_surface = pygame.display.get_surface()
 
-        # sprite groups
         self.all_sprites = Camera()
         self.collision_sprites = pygame.sprite.Group()
         self.tree_sprites = pygame.sprite.Group()
@@ -52,17 +50,14 @@ class Level:
         self.overlay = Overlay(self.player)
         self.transition = Transition(self.reset, self.player)
 
-        # небо
         self.rain = Rain(self.all_sprites)
         self.raining = randint(0,10) > 6
         self.soil_layer.raining = self.raining
         self.sky = DayChange()
 
-        # магазин
         self.menu = Menu(self.player, self.toggle_shop)
         self.shop_active = False
 
-        # музика
         self.success = pygame.mixer.Sound('../audio/success.wav')
         self.success.set_volume(0.4)
 
@@ -86,7 +81,6 @@ class Level:
     def setup(self):
         tmx_data = load_pygame('../data/map.tmx')
 
-        # Дім
         for layer in ['HouseFloor','HouseFurnitureBottom']:
             for x, y, surf in tmx_data.get_layer_by_name(layer).tiles():
                 Generic((x * TILE_SIZE, y * TILE_SIZE), surf, self.all_sprites, LAYERS['house bottom'])
@@ -95,17 +89,13 @@ class Level:
             for x, y, surf in tmx_data.get_layer_by_name(layer).tiles():
                 Generic((x * TILE_SIZE, y * TILE_SIZE), surf, self.all_sprites)
 
-        # Паркан
         for x, y, surf in tmx_data.get_layer_by_name('Fence').tiles():
                 Generic((x * TILE_SIZE, y * TILE_SIZE), surf, [self.all_sprites, self.collision_sprites])
 
-
-        # Вода
         water_frames = import_folder('../graphics/water')
         for x, y, surf in tmx_data.get_layer_by_name('Water').tiles():
             Water((x * TILE_SIZE, y * TILE_SIZE), water_frames, self.all_sprites)
 
-        # Дерева
         for obj in tmx_data.get_layer_by_name('Trees'):
              self.tree =  Tree(
                 pos = (obj.x, obj.y), 
@@ -115,15 +105,12 @@ class Level:
                 player_add = self.player_add)
              self.tree_sprites.add(self.tree)
 
-        # Квіти 
         for obj in tmx_data.get_layer_by_name('Decoration'):
             Flower((obj.x, obj.y), obj.image, [self.all_sprites, self.collision_sprites])
 
-        # плитка для зіткнень
         for x, y, surf in tmx_data.get_layer_by_name('Collision').tiles():
             Generic((x * TILE_SIZE, y * TILE_SIZE), pygame.Surface((TILE_SIZE, TILE_SIZE)), self.collision_sprites)
 
-        # Гравець
         for obj in tmx_data.get_layer_by_name('Player'):
             if obj.name == 'Start':
                 self.player = Player(
@@ -238,29 +225,24 @@ class Level:
 
     def reset(self, dt):
         
-        # рослини
         self.soil_layer.update_plants()
         
-        # грунт
         self.soil_layer.remove_water()
 
         self.chicken_layer.update_chicken(dt)
         self.cow_layer.update_cow(dt)
 
-        # рандомізування дощу
         self.raining = randint(0,10) > 6
         self.soil_layer.raining = self.raining
         if self.raining:
             self.soil_layer.water_all()
 
-        #оновлення яблук на деревах
         for tree in self.tree_sprites.sprites():
             if isinstance(tree, Tree):
                for apple in tree.apple_sprites.sprites():
                    apple.kill()
                tree.create_fruit()
         
-        # повернення неба до початкового стану
         self.sky.start_color = [255, 255, 255]
 
     def plant_collision(self):
@@ -301,12 +283,10 @@ class Level:
         self.shop_active = not self.shop_active
 
     def run(self, dt):
-        
-        # логіка малювання
+
         self.display_surface.fill('black')
         self.all_sprites.custom_draw(self.player)
         
-        # оновлення
         if self.shop_active:
             self.menu.update()
         else:
@@ -323,13 +303,11 @@ class Level:
             self.tree.update(dt)
             self.all_sprites.add(self.tree)
 
-        # погода
         self.overlay.display(self.player)
         if self.raining and not self.shop_active:
             self.rain.update()
         self.sky.display(dt)
 
-        # накладання переходу
         if self.player.sleep:
             self.transition.play(dt)
 
