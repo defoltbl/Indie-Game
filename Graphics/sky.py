@@ -10,26 +10,25 @@ class DayChange:
         self.full_surf = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.start_color = [255, 255, 255]
         self.end_color = (38, 101, 189)
-        self.direction = -1  # -1 for day to night, 1 for night to day
+        self.direction = -1 
 
     def display(self, dt):
         for index, value in enumerate(self.end_color):
-            if self.direction == -1:  # Transitioning from day to night
+            if self.direction == -1: 
                 if self.start_color[index] > value:
                     self.start_color[index] -= 2 * dt
                 else:
-                    self.start_color[index] = value  # Clamp to target color
-            elif self.direction == 1:  # Transitioning from night to day
+                    self.start_color[index] = value 
+            elif self.direction == 1: 
                 if self.start_color[index] < 255:
                     self.start_color[index] += 2 * dt
                 else:
-                    self.start_color[index] = 255  # Clamp to target color
+                    self.start_color[index] = 255 
 
-        # Check if the transition is complete to switch direction
         if self.direction == -1 and self.start_color == list(self.end_color):
-            self.direction = 1  # Switch to transitioning from night to day
+            self.direction = 1  
         elif self.direction == 1 and self.start_color == [255, 255, 255]:
-            self.direction = -1  # Switch to transitioning from day to night
+            self.direction = -1  
 
         self.full_surf.fill(self.start_color)
         self.display_surface.blit(self.full_surf, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
@@ -38,12 +37,10 @@ class DayChange:
 class Drop(Generic):
     def __init__(self, surf, pos,  moving, groups, z):
         
-        # загальне налаштування
         super().__init__(pos, surf, groups, z)
         self.lifetime = randint(400, 500)
         self.start_time = pygame.time.get_ticks()
 
-        # рух
         self.moving = moving
         if self.moving:
             self.pos = pygame.math.Vector2(self.rect.topleft)
@@ -51,12 +48,10 @@ class Drop(Generic):
             self.speed = randint(100, 300)
             
     def update(self, dt):
-        # пересування
         if self.moving:
             self.pos += self.direction * self.speed * dt
             self.rect.topleft = (round(self.pos.x), round(self.pos.y))
         
-        # timer
         if pygame.time.get_ticks() - self.start_time >= self.lifetime:
             self.kill()
 
