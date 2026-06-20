@@ -4,35 +4,29 @@ from Utils.timer import Timer
 
 class Menu:
     def __init__(self, player, toggle_menu):
-        # Основные настройки меню
         self.player = player
         self.toggle_menu = toggle_menu
         self.display_surface = pygame.display.get_surface()
         self.font_size = 30
         self.font = pygame.font.Font('../font/Soda.ttf', self.font_size)
 
-        # Настройки элементов меню
         self.width = 400
         self.space = 10
         self.padding = 8
 
-        # Записи в меню
         self.options = list(self.player.item_inventory.keys()) + list(self.player.seed_inventory.keys()) + list(self.player.animals_inventory.keys())
         self.sell_border = len(self.player.item_inventory) - 1
         self.setup()
 
-        # Переменные для масштабирования
         self.initial_screen_width = SCREEN_WIDTH
         self.initial_screen_height = SCREEN_HEIGHT
         self.scale_factor_x = 1.0
         self.scale_factor_y = 1.0
 
-        # Переменные для управления позицией в меню
         self.index = 0
         self.timer = Timer(200)
 
     def display_money(self):
-        # Отображение денег игрока на экране
         text_surf = self.font.render(f'{self.player.money}$', False, 'Black')
         text_rect = text_surf.get_rect(midbottom=(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 20))
 
@@ -40,7 +34,6 @@ class Menu:
         self.display_surface.blit(text_surf, text_rect)
 
     def setup(self):
-        # Инициализация элементов меню
         self.text_surfs = []
         self.total_height = 0
         for item in self.options:
@@ -56,7 +49,6 @@ class Menu:
         self.sell_text = self.font.render('Sell', False, 'Black')
 
     def input(self):
-        # Обработка ввода от пользователя
         keys = pygame.key.get_pressed()
         self.timer.update()
 
@@ -105,20 +97,18 @@ class Menu:
             self.index = 0
 
     def update_menu_scale(self, new_width, new_height):
-    # Обновление масштабирования элементов меню при изменении разрешения экрана
         self.scale_factor_x = new_width / self.initial_screen_width
         self.scale_factor_y = new_height / self.initial_screen_height
 
         self.width *= self.scale_factor_x
         self.main_rect.width *= self.scale_factor_x
         self.main_rect.height *= self.scale_factor_y
-        self.menu_top = new_height / 2 - self.total_height / 2  # Обновление menu_top
-        self.total_height = 0  # Сброс total_height
+        self.menu_top = new_height / 2 - self.total_height / 2  
+        self.total_height = 0  
 
         scaled_font_size = int(self.font_size * min(self.scale_factor_x, self.scale_factor_y))
         self.font = pygame.font.Font('../font/Soda.ttf', scaled_font_size)
 
-    # Очистка списка text_surfs перед добавлением новых поверхностей
         self.text_surfs.clear()
 
         for item in self.options:
@@ -129,20 +119,17 @@ class Menu:
 
         self.total_height += (len(self.text_surfs) - 1) * self.space
 
-        self.main_rect = pygame.Rect(new_width / 2 - self.width / 2, self.menu_top, self.width, self.total_height)  # Обновление main_rect
+        self.main_rect = pygame.Rect(new_width / 2 - self.width / 2, self.menu_top, self.width, self.total_height)  
 
-    # Обновление размеров и позиций текста Buy и Sell
         self.buy_text = self.font.render('Buy', False, 'Black')
         self.sell_text = self.font.render('Sell', False, 'Black')
         buy_text_width = self.buy_text.get_width() * self.scale_factor_x
         sell_text_width = self.sell_text.get_width() * self.scale_factor_x
-        text_spacing = 20 * self.scale_factor_x  # Расстояние между текстом и краем элемента меню
+        text_spacing = 20 * self.scale_factor_x  
 
-    # Позиционирование текста Buy и Sell по центру относительно элементов меню
         self.buy_text_pos = (self.main_rect.left + (self.main_rect.width - buy_text_width) / 2, self.menu_top + (self.index * (self.font_size + self.padding * 2 + self.space)))
         self.sell_text_pos = (self.main_rect.left + (self.main_rect.width - sell_text_width) / 2, self.menu_top + (self.index * (self.font_size + self.padding * 2 + self.space)))
 
-    # Проверка, чтобы текст не выходил за пределы окна
         if self.buy_text_pos[0] < self.main_rect.left:
            self.buy_text_pos = (self.main_rect.left, self.buy_text_pos[1])
         if self.buy_text_pos[0] + buy_text_width > self.main_rect.right:
@@ -156,7 +143,6 @@ class Menu:
 
 
     def show_entry(self, text_surf, amount, top, selected):
-        # Отображение элементов меню
         bg_rect = pygame.Rect(self.main_rect.left, top, self.width, text_surf.get_height() + (self.padding * 2))
         pygame.draw.rect(self.display_surface, 'White', bg_rect, 0, 4)
 
@@ -177,7 +163,6 @@ class Menu:
                 self.display_surface.blit(self.buy_text, pos_rect)
 
     def update(self):
-    # Обновление размеров и позиций элементов меню при изменении разрешения экрана
         current_width = pygame.display.get_surface().get_width()
         current_height = pygame.display.get_surface().get_height()
 
@@ -191,7 +176,7 @@ class Menu:
         amount_list = list(self.player.item_inventory.values()) + list(self.player.seed_inventory.values()) + list(self.player.animals_inventory.values())
 
         for text_index, text_surf in enumerate(self.text_surfs):
-            if text_index < len(amount_list):  # Проверка допустимости индекса
+            if text_index < len(amount_list): 
                top = self.main_rect.top + text_index * (text_surf.get_height() + (self.padding * 2) + self.space)
                amount = amount_list[text_index]
                self.show_entry(text_surf, amount, top, self.index == text_index)
